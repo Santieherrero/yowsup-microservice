@@ -15,9 +15,9 @@ CONFIG = {'AMQP_URI': "pyamqp://guest:guest@localhost"}
 def send():
     logger = app.logger
     valid_auth = verify_auth(request.headers,logger)
-    logger.info(valid_auth)
     if not valid_auth:
         return "Unauthorized for this action", 401
+
     type = request.json.get('type')
     body = request.json.get('body')
     address = request.json.get('address')
@@ -34,7 +34,7 @@ def verify_auth(headers,logger):
     if headers["Authorization"]:
         auth = request.headers["Authorization"]
         logger.info('Token => ' + auth)
-        if(auth == 'TOKEN_AU'):
+        if(auth == os.environ['TOKEN_AUTH']):
             return True
         else:
             return False

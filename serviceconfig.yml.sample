@@ -4,6 +4,7 @@ YOWSUP_USERNAME: '49XXXX'
 YOWSUP_PASSWORD: 'XXXX'
 TOKEN_RESEND_MESSAGES: 'quiero_que_me_token'
 ENDPOINT_RESEND_MESSAGES: 'http://localhost/loquesea'
+TOKEN_AUTH: 'Secure token for authentication'
 rpc_exchange: 'nameko-rpc'
 max_workers: 1
 parent_calls_tracked: 10
