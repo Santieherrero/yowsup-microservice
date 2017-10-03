@@ -10,6 +10,9 @@
 .idea/vcs.xml
 .idea/jsLibraryMappings.xml
 
+# Python
+*.pyc
+
 # Sensitive or high-churn files:
 .idea/dataSources.ids
 .idea/dataSources.xml
