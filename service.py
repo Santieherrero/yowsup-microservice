@@ -13,9 +13,7 @@ class yowsup(object):
     @rpc
     def send(self, type, body, address):
         logging.info('Get message: %s,%s,%s' % (type, body, address))
-        output = self.y.sendTextMessage(address, body)
-
-
+        self.y.sendTextMessage(address, body)
         return True
         #pprint(self)
         #logging.info(self.y)

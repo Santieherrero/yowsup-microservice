@@ -32,7 +32,6 @@ class YowsupExtension(DependencyProvider):
             .push(SendReciveLayer(tokenReSendMessage,urlReSendMessage,number)) \
             .build()
 
- 
         self.stack.setCredentials(credentials)
         self.stack.setProp(PROP_IDENTITY_AUTOTRUST, True)
         #self.stack.broadcastEvent(YowLayerEvent(YowsupCliLayer.EVENT_START))
@@ -48,8 +47,8 @@ class YowsupExtension(DependencyProvider):
                 self.stack.loop(timeout=0.5, discrete=0.5)
             except AuthError as e:
                 self.output("Auth Error, reason %s" % e)
-            except ValueError as e:  
-                self.output(e);              
+            except ValueError as e:
+                self.output(e);
             except KeyboardInterrupt:
                 self.output("\nYowsdown KeyboardInterrupt")
                 exit(0)
@@ -65,8 +64,9 @@ class YowsupExtension(DependencyProvider):
 
     def sendTextMessage(self, address,message):
         self.output('Trying to send Message to %s:%s' % (address, message))
-      
+
         self.stack.broadcastEvent(YowLayerEvent(name=SendReciveLayer.EVENT_SEND_MESSAGE, msg=message, number=address))
+
         return True
 
     def get_dependency(self, worker_ctx):

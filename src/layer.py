@@ -21,6 +21,7 @@ from yowsup.layers.protocol_profiles.protocolentities import *
 from yowsup.common.tools import Jid
 from yowsup.common.optionalmodules import PILOptionalModule, AxolotlOptionalModule
 import urllib.request
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +34,7 @@ class SendReciveLayer(YowInterfaceLayer):
     DISCONNECT_ACTION_PROMPT = 0
 
     EVENT_SEND_MESSAGE = "org.openwhatsapp.yowsup.prop.queue.sendmessage"
-    
+
     def __init__(self,tokenReSendMessage,urlReSendMessage,myNumber):
         super(SendReciveLayer, self).__init__()
         YowInterfaceLayer.__init__(self)
@@ -45,7 +46,7 @@ class SendReciveLayer(YowInterfaceLayer):
         self.disconnectAction = self.__class__.DISCONNECT_ACTION_PROMPT
         self.myNumber=myNumber
         self.credentials = None
-        
+
         self.tokenReSendMessage=tokenReSendMessage
         self.urlReSendMessage=urlReSendMessage
 
@@ -145,7 +146,7 @@ class SendReciveLayer(YowInterfaceLayer):
         formattedDate = datetime.datetime.fromtimestamp(message.getTimestamp()).strftime('%Y-%m-%d %H:%M:%S')
         sender = message.getFrom() if not message.isGroupMessage() else "%s/%s" % (
             message.getParticipant(False), message.getFrom())
-               
+
         # convert message to json
         output = self.__class__.MESSAGE_FORMAT.format(
             FROM=sender,
@@ -169,7 +170,7 @@ class SendReciveLayer(YowInterfaceLayer):
             self.output(response.info())
         except Exception as e:
             self.output(e)
-        
+
         self.output(output, tag=None, prompt=not self.sendReceipts)
 
         if self.sendReceipts:
@@ -182,13 +183,29 @@ class SendReciveLayer(YowInterfaceLayer):
     def doSendMesage(self, layerEvent):
         content = layerEvent.getArg("msg")
         number = layerEvent.getArg("number")
-        self.output("Send Message to %s : %s" % (number, content))
         jid = number
 
         if self.assertConnected():
-            outgoingMessage = TextMessageProtocolEntity(
-                content.encode("utf-8") if sys.version_info >= (3, 0) else content, to=self.aliasToJid(number))
-            self.toLower(outgoingMessage)
+            self.send_message(content,number)
+            self.output("Send Message to %s : %s" % (number, content))
+        else:
+            reconnect = False
+            reconnect = self.reconnecting()
+
+            if(reconnect):
+                self.send_message(content,number)
+                self.output("Send Message to %s : %s" % (number, content))
+
+    def send_message(self,content,number):
+        outgoingMessage = TextMessageProtocolEntity(
+        content.encode("utf-8") if sys.version_info >= (3, 0) else content, to=self.aliasToJid(number))
+
+        self.toLower(outgoingMessage)
+
+    def reconnecting(self):
+        self.connect()
+        time.sleep(3)
+        return self.connected
 
     def getTextMessageBody(self, message):
         return message.getBody()
