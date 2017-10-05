@@ -204,7 +204,7 @@ class SendReciveLayer(YowInterfaceLayer):
 
     def reconnecting(self):
         self.connect()
-        time.sleep(3)
+        time.sleep(1)
         return self.connected
 
     def getTextMessageBody(self, message):
